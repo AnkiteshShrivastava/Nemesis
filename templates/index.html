@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nemesis | YouTube Playlist to MP3 Converter & Packager</title>
+    <meta name="description" content="Convert entire YouTube playlists to premium quality MP3 audio tracks and download them in a single zipped package instantly. Free, responsive, and blazing fast.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <!-- Ambient Background Glows -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <i class="fa-solid fa-meteor logo-icon"></i>
+                <span class="logo-text">NEMESIS</span>
+            </div>
+            <p class="tagline">Convert YouTube Playlists to High-Quality MP3s inside a Single ZIP</p>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="main-workspace">
+            
+            <!-- STEP 1: Search & Input Card -->
+            <section id="search-card" class="card search-card active">
+                <div class="card-header">
+                    <h2 class="card-title">Extract Playlist</h2>
+                    <p class="card-subtitle">Paste a YouTube playlist URL or a single video link to begin extracting tracks.</p>
+                </div>
+                <div class="form-group">
+                    <div class="input-wrapper">
+                        <i class="fa-brands fa-youtube input-icon"></i>
+                        <input type="text" id="playlist-url" placeholder="https://www.youtube.com/playlist?list=..." autocomplete="off">
+                        <button id="clear-btn" class="clear-btn" type="button"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <button id="fetch-btn" class="btn btn-primary" type="button">
+                        <span>Fetch Playlist</span>
+                        <i class="fa-solid fa-arrow-right btn-icon"></i>
+                    </button>
+                </div>
+                <div id="fetch-error" class="error-message hidden">
+                    <i class="fa-solid fa-triangle-exclamation error-icon"></i>
+                    <span id="error-text">Failed to fetch playlist details. Check the URL and try again.</span>
+                </div>
+                
+                <!-- Features List for rich aesthetics -->
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <i class="fa-solid fa-bolt feature-icon"></i>
+                        <h3>Fast Fetch</h3>
+                        <p>Instant parsing of tracks, titles, and thumbnails.</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fa-solid fa-sliders feature-icon"></i>
+                        <h3>Selective Download</h3>
+                        <p>Choose exactly which songs to download.</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fa-solid fa-file-zipper feature-icon"></i>
+                        <h3>ZIP Package</h3>
+                        <p>Downloaded songs are neatly zipped for you.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STEP 2: Playlist Content Card -->
+            <section id="playlist-card" class="card playlist-card hidden">
+                <div class="playlist-meta-panel">
+                    <div class="playlist-thumb-wrapper">
+                        <img id="playlist-thumbnail" src="" alt="Playlist Thumbnail" onerror="this.src='https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=300&h=300&fit=crop'">
+                        <div class="badge playlist-badge"><i class="fa-solid fa-list-ul"></i> Playlist</div>
+                    </div>
+                    <div class="playlist-info">
+                        <h2 id="playlist-title" class="playlist-title">Loading Playlist...</h2>
+                        <p id="playlist-author" class="playlist-author">By Unknown Creator</p>
+                        <div class="playlist-stats">
+                            <span class="stat-badge"><i class="fa-solid fa-music"></i> <span id="total-songs-count">0</span> Tracks</span>
+                            <span class="stat-badge"><i class="fa-solid fa-hdd"></i> Approx. <span id="estimated-size">0 MB</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Playlist Actions / Select controls -->
+                <div class="selection-actions">
+                    <div class="checkbox-control">
+                        <label class="custom-checkbox">
+                            <input type="checkbox" id="select-all-checkbox" checked>
+                            <span class="checkmark"></span>
+                            <span class="label-text">Select All Tracks</span>
+                        </label>
+                    </div>
+                    <div class="selected-counter-text">
+                        Selected: <span id="selected-songs-count">0</span> / <span id="total-songs-count-2">0</span>
+                    </div>
+                </div>
+
+                <!-- Tracks List Scrollable Container -->
+                <div class="tracks-list-container">
+                    <ul id="tracks-list" class="tracks-list">
+                        <!-- Dynamic track rows go here -->
+                    </ul>
+                </div>
+
+                <!-- Footer Download Trigger -->
+                <div class="playlist-card-footer">
+                    <button id="back-to-search-btn" class="btn btn-secondary">
+                        <i class="fa-solid fa-arrow-left btn-icon-left"></i>
+                        <span>Back</span>
+                    </button>
+                    <button id="download-trigger-btn" class="btn btn-gradient">
+                        <i class="fa-solid fa-download btn-icon"></i>
+                        <span>Convert & Pack ZIP</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- STEP 3: Progress & Real-time Console Card -->
+            <section id="progress-card" class="card progress-card hidden">
+                <div class="card-header centered">
+                    <h2 class="card-title text-gradient">Converting Tracks</h2>
+                    <p class="card-subtitle">Downloading and converting to 192kbps MP3 audio. Please do not close this tab.</p>
+                </div>
+
+                <!-- Global Progress Dashboard -->
+                <div class="progress-dashboard">
+                    <div class="progress-radial-wrapper">
+                        <!-- Modern linear progress wrapper with numerical display -->
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill" id="global-progress-fill" style="width: 0%;"></div>
+                        </div>
+                        <div class="progress-details-row">
+                            <div class="stat-box">
+                                <span class="stat-label">Progress</span>
+                                <span class="stat-val" id="progress-percent">0%</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-label">Successful</span>
+                                <span class="stat-val" id="completed-count">0 / 0</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-label">Speed</span>
+                                <span class="stat-val" id="download-speed">0 KB/s</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-label">ETA</span>
+                                <span class="stat-val" id="download-eta">00:00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Current active song indicator -->
+                    <div class="current-song-indicator">
+                        <div class="pulse-indicator"></div>
+                        <span class="indicator-label">Active:</span>
+                        <span id="current-active-song-title" class="active-title">Initiating downloads...</span>
+                    </div>
+                </div>
+
+                <!-- Dynamic Track Status List (Shows each track's state) -->
+                <div class="status-tracks-container">
+                    <h4 class="section-title">Track Processing Status</h4>
+                    <div id="status-tracks-list" class="status-tracks-list">
+                        <!-- Dynamic status items -->
+                    </div>
+                </div>
+
+                <!-- Interactive Terminal Logs Console -->
+                <div class="terminal-container">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span class="dot dot-red"></span>
+                            <span class="dot dot-yellow"></span>
+                            <span class="dot dot-green"></span>
+                        </div>
+                        <span class="terminal-title">System Console</span>
+                        <button id="toggle-console-btn" class="terminal-toggle" title="Toggle Console Log"><i class="fa-solid fa-chevron-down"></i></button>
+                    </div>
+                    <div id="terminal-body" class="terminal-body">
+                        <div class="log-line system-line">[SYSTEM] Initializing converter backend...</div>
+                        <div class="log-line system-line">[SYSTEM] Ready for task.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STEP 4: Success & Download Card -->
+            <section id="success-card" class="card success-card hidden">
+                <div class="success-icon-wrapper">
+                    <div class="success-ring"></div>
+                    <div class="success-ring-inner"></div>
+                    <i class="fa-solid fa-file-zipper success-icon"></i>
+                </div>
+                
+                <h2 class="success-title">ZIP Archive Created!</h2>
+                <p class="success-subtitle">All selected tracks have been successfully converted to high-quality MP3 and packaged into a single ZIP file.</p>
+
+                <!-- ZIP Details Card -->
+                <div class="zip-details-box">
+                    <div class="zip-icon"><i class="fa-solid fa-file-archive"></i></div>
+                    <div class="zip-info">
+                        <span id="zip-name-label" class="zip-filename">playlist_audio_package.zip</span>
+                        <span class="zip-file-meta">Format: MP3 Audio (.zip) • Quality: 192 kbps</span>
+                    </div>
+                </div>
+
+                <div class="success-actions">
+                    <a id="download-zip-btn" href="" class="btn btn-primary btn-large btn-glowing">
+                        <i class="fa-solid fa-cloud-arrow-down"></i>
+                        <span>Download ZIP File</span>
+                    </a>
+                    
+                    <button id="reset-app-btn" class="btn btn-secondary btn-large">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        <span>Convert Another Playlist</span>
+                    </button>
+                </div>
+            </section>
+
+        </main>
+        
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>©2026 Ankitesh Shrivastava</p>
+        </footer>
+    </div>
+    <!-- Client Controller Script -->
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+</body>
+</html>
