@@ -310,4 +310,5 @@ def download_zip(job_id, zip_name):
         return "File not found or has expired.", 404
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=False)
+    render_port = int(os.getenv('PORT', 5000))
+    app.run(host='0.0.0.0', port=render_port, debug=True, use_reloader=False)
