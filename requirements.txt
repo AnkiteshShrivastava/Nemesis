@@ -21,7 +21,7 @@ yt-dlp
 # - Optionally: render.yaml or Procfile (to specify start command)
 #
 # Example start command for Flask:
-#   gunicorn app:app
+#   python app.py
 #
 # If using yt-dlp, ffmpeg must be available in the environment.
 # ---
