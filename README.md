@@ -28,3 +28,15 @@
    ```bash
    git clone https://github.com/YourUsername/nemesis-converter.git
    cd nemesis-converter
+
+2. **Install Python dependencies: Ensure you have Python 3.8+ installed, then run:**
+
+   ```bash
+   pip install flask flask-cors yt-dlp
+   Install FFmpeg: Make sure you have ffmpeg installed on your system or place ffmpeg.exe and ffprobe.exe directly in the project root directory.
+
+3.**Run the server:**
+
+   ```bash
+   python app.py
+   Open the App: Navigate to http://127.0.0.1:5000 in your browser.
