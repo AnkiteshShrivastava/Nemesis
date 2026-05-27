@@ -1,0 +1,27 @@
+
+# Project dependencies
+flask
+flask_cors
+yt-dlp
+
+# External dependencies (system binaries, not Python packages):
+# ffmpeg
+# ffprobe
+
+# ---
+# Render Deployment Notes:
+#
+# Required files for deployment:
+# - requirements.txt (this file)
+# - app.py (main Flask app)
+# - static/ (static assets)
+# - templates/ (HTML templates)
+# - downloads/ (if you want to persist or serve files)
+# - ffmpeg and ffprobe binaries (install via build script or Render environment)
+# - Optionally: render.yaml or Procfile (to specify start command)
+#
+# Example start command for Flask:
+#   gunicorn app:app
+#
+# If using yt-dlp, ffmpeg must be available in the environment.
+# ---
